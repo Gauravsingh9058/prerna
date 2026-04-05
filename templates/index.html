@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prerna Canteen</title>
+  <meta name="theme-color" content="#ef6c2f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Prerna Canteen">
+  <meta name="description" content="Prerna Canteen mobile ordering app with live location, UPI payment, WhatsApp handoff, and fast campus delivery.">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-page="home" class="app-home">
+  <div class="site-bg"></div>
+  <div class="floating-orb orb-one"></div>
+  <div class="floating-orb orb-two"></div>
+
+  <header class="hero-shell">
+    <nav class="topbar reveal">
+      <div class="brand-lockup">
+        <span class="brand-dot"></span>
+        <div>
+          <p class="eyebrow">Smart hostel ordering</p>
+          <h1>Prerna Canteen</h1>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" class="ghost-btn hidden" id="installAppBtn">Install App</button>
+        <a class="ghost-btn" href="{{ url_for('admin') }}">Admin Dashboard</a>
+      </div>
+    </nav>
+
+    <section class="hero-card reveal">
+      <div class="hero-copy stagger-group">
+        <span class="hero-pill">Delivery within {{ max_distance }} km</span>
+        <h2>Fast campus food ordering with live location, UPI, and WhatsApp handoff.</h2>
+        <p>Pick your food, capture your GPS location, pay with UPI, and send the order to the canteen instantly.</p>
+
+        <div class="hero-stats">
+          <article>
+            <strong>16</strong>
+            <span>Menu items</span>
+          </article>
+          <article>
+            <strong>Live</strong>
+            <span>Order tracking</span>
+          </article>
+          <article>
+            <strong>QR</strong>
+            <span>UPI ready</span>
+          </article>
+        </div>
+      </div>
+
+      <aside class="hero-side stagger-group">
+        <div class="mini-card">
+          <p class="eyebrow">Payment</p>
+          <h3>UPI ID</h3>
+          <p class="mini-value">{{ upi_id }}</p>
+        </div>
+        <div class="mini-card accent-card">
+          <p class="eyebrow">Canteen base</p>
+          <h3>{{ canteen.name }}</h3>
+          <p>{{ canteen.latitude }}, {{ canteen.longitude }}</p>
+        </div>
+        <div class="mini-card install-card hidden" id="installCard">
+          <p class="eyebrow">Mobile App</p>
+          <h3>Install on your phone</h3>
+          <p>Open Prerna Canteen like an app from your home screen and reuse saved cart data faster.</p>
+          <button type="button" class="primary-btn" id="installCardBtn">Install Now</button>
+        </div>
+      </aside>
+    </section>
+  </header>
+
+  <main class="page-shell">
+    <section class="menu-panel reveal">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Freshly listed</p>
+          <h2>Menu</h2>
+        </div>
+        <p class="section-note">Tap quantity, add items, and place your order with live GPS verification.</p>
+      </div>
+
+      {% for category, items in categories.items() %}
+      <section class="category-block reveal">
+        <div class="category-head">
+          <h3>{{ category }}</h3>
+          <span>{{ items|length }} items</span>
+        </div>
+        <div class="menu-grid">
+          {% for item in items %}
+          <article class="menu-card" data-name="{{ item.name }}" data-price="{{ item.price }}">
+            <div class="menu-card-top">
+              <div>
+                <p class="eyebrow">Fresh pick</p>
+                <h4>{{ item.name }}</h4>
+              </div>
+              <span class="price-chip">Rs. {{ item.price }}</span>
+            </div>
+
+            <div class="qty-picker">
+              <button type="button" class="qty-btn" data-direction="-1" aria-label="Decrease quantity">-</button>
+              <span class="menu-qty">1</span>
+              <button type="button" class="qty-btn" data-direction="1" aria-label="Increase quantity">+</button>
+            </div>
+
+            <button type="button" class="primary-btn add-btn">Add to cart</button>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+      {% endfor %}
+    </section>
+
+    <aside class="checkout-panel">
+      <section class="cart-card reveal" id="cartSection">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Your selection</p>
+            <h2>Cart</h2>
+          </div>
+          <span class="cart-count" id="cartCount">0 items</span>
+        </div>
+
+        <div id="cartItems" class="cart-items">
+          <div class="empty-card">
+            <h3>Cart is empty</h3>
+            <p>Add a few snacks or a meal to get started.</p>
+          </div>
+        </div>
+
+        <div class="cart-summary">
+          <div>
+            <span>Total</span>
+            <strong id="cartTotal">Rs. 0</strong>
+          </div>
+          <button type="button" class="ghost-btn" id="clearCartBtn">Clear cart</button>
+        </div>
+      </section>
+
+      <section class="checkout-card reveal" id="checkoutSection">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Delivery details</p>
+            <h2>Checkout</h2>
+          </div>
+        </div>
+
+        <form id="orderForm" class="order-form" novalidate>
+          <label class="field">
+            <span>Ward / Room</span>
+            <input id="wardInput" name="ward" type="text" placeholder="Ward 5, Room 210" required>
+          </label>
+
+          <label class="field">
+            <span>Phone</span>
+            <input id="phoneInput" name="phone" type="tel" inputmode="tel" placeholder="10-digit mobile number" required>
+          </label>
+
+          <div class="location-card">
+            <div class="location-head">
+              <div>
+                <span>Live GPS location</span>
+                <p id="locationStatus">Location not captured yet.</p>
+              </div>
+              <div class="location-actions">
+                <button type="button" class="primary-btn slim" id="captureLocationBtn">Start live tracking</button>
+                <button type="button" class="ghost-btn slim hidden" id="stopTrackingBtn">Stop</button>
+              </div>
+            </div>
+
+            <div class="delivery-badge" id="deliveryBadge">Delivery check pending</div>
+            <div class="location-meta" id="locationMeta">Enable location permission to auto-detect your exact delivery point.</div>
+            <div class="location-help hidden" id="locationHelp"></div>
+
+            <div class="map-frame-shell hidden" id="mapShell">
+              <iframe
+                id="mapPreview"
+                title="Google map preview"
+                loading="lazy"
+                allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+          </div>
+
+          <div class="payment-card">
+            <div>
+              <p class="eyebrow">UPI payment</p>
+              <h3>Scan and pay</h3>
+              <p class="muted">Use any UPI app with the QR below, then submit the order on WhatsApp.</p>
+            </div>
+            <img src="{{ qr_url }}" alt="UPI QR code for Prerna Canteen payment">
+            <div class="upi-strip">{{ upi_id }}</div>
+          </div>
+
+          <button type="submit" class="primary-btn place-order-btn" id="placeOrderBtn">Place order</button>
+          <p class="form-message" id="formMessage"></p>
+        </form>
+      </section>
+    </aside>
+  </main>
+
+  <button type="button" class="mobile-cart-bar hidden" id="mobileCartBar">
+    <span id="mobileCartLabel">0 items in cart</span>
+    <strong id="mobileCartTotal">Rs. 0</strong>
+  </button>
+
+  <script>
+    window.APP_CONFIG = {{ frontend_config|tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

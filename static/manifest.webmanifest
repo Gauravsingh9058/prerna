@@ -1,0 +1,25 @@
+{
+  "name": "Prerna Canteen",
+  "short_name": "Prerna",
+  "description": "Modern food ordering app for Prerna Canteen with live tracking, admin updates, UPI, and WhatsApp ordering.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff7ef",
+  "theme_color": "#ef6c2f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard | Prerna Canteen</title>
+  <meta name="theme-color" content="#ef6c2f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-page="admin">
+  <div class="site-bg admin-bg"></div>
+
+  <main class="admin-shell">
+    <header class="admin-header reveal">
+      <div>
+        <p class="eyebrow">Operations</p>
+        <h1>Prerna Canteen Admin</h1>
+        <p class="muted">Orders refresh automatically every few seconds. Click anywhere once to enable sound alerts.</p>
+      </div>
+      <div class="admin-actions">
+        <a class="ghost-btn" href="{{ url_for('index') }}">Back to website</a>
+        <button type="button" class="primary-btn" id="manualRefreshBtn">Refresh now</button>
+      </div>
+    </header>
+
+    <section class="admin-metrics reveal">
+      <article class="metric-card">
+        <span>Total Orders</span>
+        <strong id="totalOrders">0</strong>
+      </article>
+      <article class="metric-card">
+        <span>Pending</span>
+        <strong id="pendingOrders">0</strong>
+      </article>
+      <article class="metric-card">
+        <span>Active Delivery</span>
+        <strong id="activeOrders">0</strong>
+      </article>
+      <article class="metric-card">
+        <span>Last Refresh</span>
+        <strong id="lastRefresh">Waiting</strong>
+      </article>
+    </section>
+
+    <p class="admin-inline-note reveal" id="adminNotice">Listening for new orders...</p>
+
+    <section class="admin-orders-wrap">
+      <div id="ordersContainer" class="admin-orders-grid">
+        <article class="empty-card wide">
+          <h3>No orders yet</h3>
+          <p>New incoming orders will appear here automatically.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.ADMIN_CONFIG = {{ admin_config|tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

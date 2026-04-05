@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order Confirmed | Prerna Canteen</title>
+  <meta name="theme-color" content="#ef6c2f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-page="success">
+  <div class="site-bg success-bg"></div>
+
+  <main class="success-shell">
+    <section class="success-card reveal">
+      <div class="success-badge">Order saved</div>
+      <h1>Order #{{ order.id }} is ready to send</h1>
+      <p class="muted">Your order has been stored in the dashboard. WhatsApp will open automatically so you can send it instantly.</p>
+
+      <div class="success-grid">
+        <article class="summary-card">
+          <p class="eyebrow">Delivery</p>
+          <h2>{{ order.ward }}</h2>
+          <p>{{ order.phone }}</p>
+          <p>{{ order.distance_km }} km from canteen</p>
+        </article>
+        <article class="summary-card">
+          <p class="eyebrow">Payment</p>
+          <h2>{{ order.payment_status }}</h2>
+          <p>Total: Rs. {{ order.total_amount }}</p>
+          <p>Status: {{ order.status }}</p>
+        </article>
+      </div>
+
+      <section class="ordered-items">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Order details</p>
+            <h2>Items</h2>
+          </div>
+        </div>
+
+        <div class="success-items-list">
+          {% for item in order.line_items %}
+          <div class="success-item-row">
+            <div>
+              <strong>{{ item.item_name }}</strong>
+              <span>{{ item.quantity }} x Rs. {{ item.unit_price }}</span>
+            </div>
+            <strong>Rs. {{ item.subtotal }}</strong>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <div class="success-actions">
+        <a class="primary-btn" id="whatsappButton" href="{{ order.whatsapp_url }}" target="_blank" rel="noopener">Open WhatsApp</a>
+        <a class="ghost-btn" href="{{ order.bill_url }}" target="_blank" rel="noopener">Download Bill</a>
+        <a class="ghost-btn" href="{{ url_for('index') }}">Order More</a>
+      </div>
+
+      <p class="muted small-text">If WhatsApp does not open automatically, use the button above.</p>
+    </section>
+  </main>
+
+  <script>
+    window.SUCCESS_CONFIG = {{ {"whatsappUrl": order.whatsapp_url}|tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
