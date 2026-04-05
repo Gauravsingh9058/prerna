@@ -30,3 +30,22 @@ http://127.0.0.1:5000
 - `templates/`
 - `static/`
 - `android-wrapper/`
+
+## Deploy on Render
+
+This repo is prepared for Render deployment with `render.yaml`.
+
+Steps:
+
+1. Sign in to Render.
+2. Click `New` -> `Blueprint`.
+3. Connect the GitHub repo `Gauravsingh9058/prerna`.
+4. Select the `main` branch.
+5. Render should detect `render.yaml` automatically.
+6. Click `Deploy Blueprint`.
+
+Render will use:
+
+- build command: `pip install -r requirements.txt`
+- start command: `gunicorn app:app`
+- health check: `/healthz`

@@ -268,6 +268,13 @@ def index() -> str:
     )
 
 
+@app.get("/healthz")
+def healthz():
+    db = get_db()
+    db.execute("SELECT 1").fetchone()
+    return jsonify({"ok": True, "service": "prerna-canteen"})
+
+
 @app.route("/manifest.webmanifest")
 def manifest() -> Any:
     return send_from_directory(STATIC_DIR, "manifest.webmanifest", mimetype="application/manifest+json")
