@@ -1,8 +1,10 @@
 __pycache__/
 *.py[cod]
 *.sqlite3
+*.sqlite3-journal
 *.db
 *.db-journal
+*.journal
 plain_write.txt
 
 .venv/
